@@ -8,8 +8,11 @@ Further sub directories in each directory are broken into topic/date for example
 
 ## Contents
 
-### homework
+### homework/
  - temp.txt
 ---
-### examples
+### examples/
  - temp.txt
+	### shell/
+	 - demoShell.sh
+	 - myFirstShellProgram.sh
