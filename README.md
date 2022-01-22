@@ -13,6 +13,6 @@ Further sub directories in each directory are broken into topic/date for example
 ---
 ### examples/
  - temp.txt
-	### shell/
+	### - shell/
 	 - demoShell.sh
 	 - myFirstShellProgram.sh
