@@ -1,4 +1,4 @@
-# Spring2022_CS322
+# Spring2022_CS321
 Contains all my code for my CS 322.
 Examples gone over in class can be found in the "examples" directory.
 All homework assignments can be found in the "homework" directory.
