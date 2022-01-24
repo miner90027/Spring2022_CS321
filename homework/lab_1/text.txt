@@ -1,0 +1,3 @@
+This is a text file 
+I have a total of three lines.
+I am used for testing countline.sh
