@@ -10,6 +10,8 @@ Further sub directories in each directory are broken into topic/date for example
 
 ### homework/
  - temp.txt
+	### - lab_1/
+	 - countline.sh
 ---
 ### examples/
  - temp.txt
