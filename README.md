@@ -12,6 +12,11 @@ Further sub directories in each directory are broken into topic/date for example
  - temp.txt
 	### - lab_1/
 	 - countline.sh
+	 - text.txt
+		#### - foo/
+		 - text.txt
+			##### - bar/
+			 - text.txt
 ---
 ### examples/
  - temp.txt
@@ -19,3 +24,4 @@ Further sub directories in each directory are broken into topic/date for example
 	### - shell/
 	 - demoShell.sh
 	 - myFirstShellProgram.sh
+	 - demoFileOperation.sh

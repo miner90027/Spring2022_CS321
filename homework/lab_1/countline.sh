@@ -9,3 +9,4 @@
 #
 
 
+echo "hello" >&2 #prints to std error
