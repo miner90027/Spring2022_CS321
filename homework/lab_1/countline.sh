@@ -20,14 +20,16 @@ read -p 'File name: ' file
 
 declare -i count=0
 
-((++count))
+#((++count))
 
 # count the number of lines in the file
 
-cat $file | while read line; do
+while IFS= read -r line
+do
 	count=$(( count + 1 ))
-	echo "$line"
-done
+#	echo "$line"
+#	echo "current count: " $count
+done < "$file" 
 
 # print the count to the screen
 echo "Total number of lines is:" $count
