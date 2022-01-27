@@ -1,4 +1,5 @@
-#
+#!/bin/bash
+
 # Aleks McCormick
 # Spring 2022 CS 321
 # 2022/24/01
@@ -17,15 +18,16 @@ read -p 'File name: ' file
 
 #echo "$file"
 
-#count=$(wc -l $file)
+declare -i count=0
+
+((++count))
 
 # count the number of lines in the file
-#echo "$file" | wc -l | (read count; temp +"$count")
-#count=$(wc -l $(file))
 
-cat $file | while read; do
-	count=$((count + 1))
+cat $file | while read line; do
+	count=$(( count + 1 ))
+	echo "$line"
 done
 
 # print the count to the screen
-echo "$count"
+echo "Total number of lines is:" $count
