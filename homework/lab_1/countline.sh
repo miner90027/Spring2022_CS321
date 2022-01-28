@@ -44,6 +44,11 @@ do
 	if [[ -d "$input" ]]
 	then
 	echo "This is a directory"
+
+		while IFS= read -rd '' file;
+		do echo "$file"
+			countlines "$file"
+		done < <(find ./"$input"/ -type f -print0)
 	fi
 done
 
