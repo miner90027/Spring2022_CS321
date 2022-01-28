@@ -19,14 +19,23 @@ countlines(){
 		#echo "Current line: $line"
 		#echo "current count:  $count"
 	done < "$1" 
-#	return $count
+
+}
+
+checkread() {
+	if [[ -r "$1" ]]
+	then
+		countlines "$1"
+#	else
+#		"$1" read -r
+	fi
 }
 
 
-
+#echo $#
 declare -i count=0
 
-if (( $# != 1 ))
+if (( $# > 0 ))
 then
 	for input in "$@"
 	do
@@ -37,7 +46,7 @@ then
 		#echo ""
 		#echo "Currently reading: $input"
 
-		countlines "$input"
+		checkread "$input"
 
 	# check if value is a directory
 		else [[ -d "$input" ]]
@@ -46,7 +55,7 @@ then
 			while IFS= read -rd '' file;
 			do 
 				#echo "$file"
-				countlines "$file"
+				checkread "$file"
 			done < <(find ./"$input"/ -type f -print0)
 		fi
 	done
@@ -54,7 +63,7 @@ else
 	while IFS= read -rd '' file;
 	do 
 		#echo "$file"
-		countlines "$file"
+		checkread "$file"
 	done < <(find . -type f -print0)
 fi
 # print the count to the screen
