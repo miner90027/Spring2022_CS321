@@ -16,8 +16,8 @@ countlines(){
 	do
 
 		((++count))
-		echo "Current line: $line"
-		echo "current count:  $count"
+		#echo "Current line: $line"
+		#echo "current count:  $count"
 	done < "$1" 
 #	return $count
 }
@@ -26,31 +26,36 @@ countlines(){
 
 declare -i count=0
 
+if (( $# != 1 ))
+then
+	for input in "$@"
+	do
 
-for input in "$@"
-do
+	# check if value is a file
+		if [[ -f "$input" ]] 
+		then
+		#echo ""
+		#echo "Currently reading: $input"
 
-# check if value is a file
-	if [[ -f "$input" ]] 
-	then
-	echo ""
-	echo "Currently reading: $input"
+		countlines "$input"
 
-	countlines "$input"
-	fi
+	# check if value is a directory
+		else [[ -d "$input" ]]
+		#echo "This is a directory"
 
-
-# check if value is a directory
-	if [[ -d "$input" ]]
-	then
-	echo "This is a directory"
-
-		while IFS= read -rd '' file;
-		do echo "$file"
-			countlines "$file"
-		done < <(find ./"$input"/ -type f -print0)
-	fi
-done
-
+			while IFS= read -rd '' file;
+			do 
+				#echo "$file"
+				countlines "$file"
+			done < <(find ./"$input"/ -type f -print0)
+		fi
+	done
+else
+	while IFS= read -rd '' file;
+	do 
+		#echo "$file"
+		countlines "$file"
+	done < <(find . -type f -print0)
+fi
 # print the count to the screen
 echo "Total number of lines is: $count"
