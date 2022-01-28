@@ -24,6 +24,9 @@ declare -i count=0
 for input in "$@"
 do
 
+# check if value is a file
+	if [[ -f "$input" ]] 
+	then
 	echo ""
 	echo "Currently reading: $input"
 
@@ -32,10 +35,16 @@ do
 	do
 		count=$(( count + 1 ))
 		echo "Current line: $line"
-		echo "current count: " $count
+		echo "current count:  $count"
 	done < "$input" 
+	fi
 
+# check if value is a directory
+	if [[ -d "$input" ]]
+	then
+	echo "This is a directory"
+	fi
 done
 
 # print the count to the screen
-echo "Total number of lines is:" $count
+echo "Total number of lines is: $count"
