@@ -13,26 +13,29 @@
 
 
 # Receive user input file
-echo "Please enter a file name"
-read -p 'File name: ' input
+#echo "Please enter a file name"
+#read -p 'File name: ' input
 
-#echo "$input"
+
 
 declare -i count=0
 
-#((++count))
 
-for file in /$input/
+for input in "$@"
 do
-echo $file
-# count the number of lines in the file
 
-#	while IFS= read -r line
-#	do
+	echo ""
+	echo "Currently reading: $input"
+
+# count the number of lines in the file
+	while IFS= read -r line
+	do
 		count=$(( count + 1 ))
-#		echo "$line"
-#		echo "current count: " $count
-#	done < "$input" 
+		echo "Current line: $line"
+		echo "current count: " $count
+	done < "$input" 
+
 done
+
 # print the count to the screen
 echo "Total number of lines is:" $count
