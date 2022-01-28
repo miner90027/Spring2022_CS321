@@ -9,12 +9,17 @@
 #	directories
 #
 
-#echo "hello" >&2 #prints to std error
 
-
-# Receive user input file
-#echo "Please enter a file name"
-#read -p 'File name: ' input
+countlines(){
+# count the number of lines in the file
+	while IFS= read -r line
+	do
+		count=$(( count + 1 ))
+		echo "Current line: $line"
+		echo "current count:  $count"
+	done < "$1" 
+#	return $count
+}
 
 
 
@@ -30,19 +35,20 @@ do
 	echo ""
 	echo "Currently reading: $input"
 
-# count the number of lines in the file
-	while IFS= read -r line
-	do
-		count=$(( count + 1 ))
-		echo "Current line: $line"
-		echo "current count:  $count"
-	done < "$input" 
+	countlines "$input"
 	fi
+
 
 # check if value is a directory
 	if [[ -d "$input" ]]
 	then
 	echo "This is a directory"
+
+		for file in /"$input"/*
+		do
+#			countlines "$file"
+			echo "$file"
+		done
 	fi
 done
 
