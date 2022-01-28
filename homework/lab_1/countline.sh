@@ -14,7 +14,8 @@ countlines(){
 # count the number of lines in the file
 	while IFS= read -r line
 	do
-		count=$(( count + 1 ))
+
+		((++count))
 		echo "Current line: $line"
 		echo "current count:  $count"
 	done < "$1" 
@@ -43,12 +44,6 @@ do
 	if [[ -d "$input" ]]
 	then
 	echo "This is a directory"
-
-		for file in /"$input"/*
-		do
-#			countlines "$file"
-			echo "$file"
-		done
 	fi
 done
 
