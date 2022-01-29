@@ -18,7 +18,7 @@ countlines(){
 		((++count))
 		#echo "Current line: $line"
 		#echo "current count:  $count"
-	done < "$1" 
+	done < "$1"
 
 }
 
@@ -26,8 +26,9 @@ checkread() {
 	if [[ -r "$1" ]]
 	then
 		countlines "$1"
-#	else
-#		"$1" read -r
+	else
+		echo "$1" >> error.txt 2>&1
+		cat "$1" >> error.txt 2>&1
 	fi
 }
 
