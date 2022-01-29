@@ -27,7 +27,7 @@ checkread() {
 	then
 		countlines "$1"
 	else
-		echo "$1" >> error.txt 2>&1
+		#echo "$1" >> error.txt 2>&1
 		cat "$1" >> error.txt 2>&1
 	fi
 }
