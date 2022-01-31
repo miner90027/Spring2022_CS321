@@ -13,10 +13,9 @@ Further sub directories in each directory are broken into topic/date for example
 - countline.sh
 - text.txt
 - hopeless.txt
-#### - foo/
-- text.txt
-##### - bar/
-- text.txt
+- foo/text.txt
+- bar/text.txt
+- 
 ---
 ### examples/
 ### - shell/
