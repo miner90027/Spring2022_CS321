@@ -9,19 +9,27 @@ Further sub directories in each directory are broken into topic/date for example
 ## Contents
 
 ### homework/
- - temp.txt
 	### - lab_1/
 	 - countline.sh
 	 - text.txt
+	 - hopeless.txt
 		#### - foo/
 		 - text.txt
 			##### - bar/
 			 - text.txt
 ---
 ### examples/
- - temp.txt
- - demoProcessParts.cpp
 	### - shell/
 	 - demoShell.sh
 	 - myFirstShellProgram.sh
 	 - demoFileOperation.sh
+	### - process/
+	 - demoClient.c
+	 - demoOrphan.c
+	 - demoParentChildProcessCreation.c
+	 - demoProcessParts.cpp
+	 - demoServer.c
+	 - demoSharedMemoryReader.c
+	 - demoSharedMemoryWriter.c
+	 - demoSignal.c
+	 - demoZombie.c
