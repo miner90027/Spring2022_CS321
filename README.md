@@ -9,21 +9,21 @@ Further sub directories in each directory are broken into topic/date for example
 ## Contents
 
 ### homework/
-	### - lab_1/
+### 	- lab_1/
 	 - countline.sh
 	 - text.txt
 	 - hopeless.txt
-		#### - foo/
-		 - text.txt
-			##### - bar/
-			 - text.txt
+#### 		- foo/
+		- text.txt
+##### 		- bar/
+ 		- text.txt
 ---
 ### examples/
-	### - shell/
+### 	- shell/
 	 - demoShell.sh
 	 - myFirstShellProgram.sh
 	 - demoFileOperation.sh
-	### - process/
+### 	- process/
 	 - demoClient.c
 	 - demoOrphan.c
 	 - demoParentChildProcessCreation.c
