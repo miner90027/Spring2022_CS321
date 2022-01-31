@@ -14,8 +14,8 @@ Further sub directories in each directory are broken into topic/date for example
 - text.txt
 - hopeless.txt
 - foo/text.txt
-- bar/text.txt
-- 
+- foo/bar/text.txt
+
 ---
 ### examples/
 ### - shell/
