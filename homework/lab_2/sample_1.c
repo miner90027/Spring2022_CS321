@@ -25,14 +25,14 @@ int main()
 
 void sigHandler (int sigNum)
 {
-	printf(" received an interrupt signal through Ctrl-c. \n");
-	printf("Going to sleep.\n Notice the process is not exiting immediately");
+	printf("\nReceived an interrupt signal through Ctrl-c. \n");
+	printf("Going to sleep.\nNotice the process is not exiting immediately.\n\n");
 
 	// This is where the shutdown code would be  inserted
 
 	sleep(1);
 	printf("Out of here.\n");
 
-	printf("Now the process will terminate wiht teh exit system call \n");
+	printf("Now the process will terminate with the exit system call \n");
 	exit(0);
 }
