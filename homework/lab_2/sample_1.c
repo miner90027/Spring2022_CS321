@@ -18,7 +18,7 @@ void sigHandler (int);
 int main()
 {
 	signal (SIGINT, sigHandler);
-	printf("Waiting...\n"):
+	printf("Waiting...\n");
 	pause();
 	return 0;
 }
