@@ -10,9 +10,8 @@ else
 		if [[ -r "$file.c" ]]
 				then
 			# compile the passed file
-			g++ -c "$file.c" -lpthread -lrt
 			# create an exacutable for the file passed
-			g++ -o "$file" "$file" -lpthread -lrt
+			g++ "$file.c" -lpthread -lrt -o "$file"
 		else
 			# Printe error statements if cannot read the file
 			echo "Invalid file: $file"

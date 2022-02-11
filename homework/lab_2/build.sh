@@ -10,9 +10,8 @@ else
 		if [[ -r "$file.c" ]] || [[ -r "$file.cpp" ]]
 				then
 			# compile the passed file
-			g++ -c "$file.c"
 			# create an exacutable for the file passed
-			g++ -o "$file" "$file.o"
+			g++ "$file.c" -o "$file"
 		else
 			# Printe error statements if cannot read the file
 			echo "Invalid file: $file"
