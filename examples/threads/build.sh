@@ -7,12 +7,12 @@ else
 	for file in "$@"
 	do
 		# verify that the file passed is a readable c file
-		if [[ -r "$file.c" ]] || [[ -r "$file.cpp" ]]
+		if [[ -r "$file.c" ]]
 				then
 			# compile the passed file
-			g++ -c "$file.c"
+			g++ -c "$file.c" -lpthread -lrt
 			# create an exacutable for the file passed
-			g++ -o "$file" "$file.o"
+			g++ -o "$file" "$file" -lpthread -lrt
 		else
 			# Printe error statements if cannot read the file
 			echo "Invalid file: $file"
