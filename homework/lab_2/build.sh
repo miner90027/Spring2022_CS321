@@ -7,11 +7,16 @@ else
 	for file in "$@"
 	do
 		# verify that the file passed is a readable c file
-		if [[ -r "$file.c" ]] || [[ -r "$file.cpp" ]]
-				then
+		if [[ -r "$file.c" ]]
+		then
 			# compile the passed file
 			# create an exacutable for the file passed
 			g++ "$file.c" -o "$file"
+		fi
+		if [[ -r "$file.cpp" ]]
+		then
+			g++ "$file.cpp" -o "$file"
+
 		else
 			# Printe error statements if cannot read the file
 			echo "Invalid file: $file"
