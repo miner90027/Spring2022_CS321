@@ -9,23 +9,23 @@ Further sub directories in each directory are broken into topic for examples and
 ## Contents
 
 ### [homework/](homework/)
-### - lab_1/
+### [- lab_1/](homework/lab_1/)
 - countline.sh
 - text.txt
 - hopeless.txt
 - foo/text.txt
 - foo/bar/text.txt
-### - lab_2/
+### [- lab_2/](homework/lab_2/)
 - build.sh
 - sample_1.c
 - lab_2.cpp
 ---
-### examples/
-### - shell/
+### [examples/](examples/)
+### [- shell/](examples/shell/)
  - demoShell.sh
  - myFirstShellProgram.sh
  - demoFileOperation.sh
-### - process/
+### [- process/](examples/process/)
  - demoClient.c
  - demoOrphan.c
  - demoParentChildProcessCreation.c
@@ -35,7 +35,7 @@ Further sub directories in each directory are broken into topic for examples and
  - demoSharedMemoryWriter.c
  - demoSignal.c
  - demoZombie.c
-### - threads/
+### [- threads/](examples/threads/)
  - build.sh
  - demoThread.c
  - demoMultiThread.c
