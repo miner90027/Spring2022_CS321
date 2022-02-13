@@ -8,7 +8,7 @@ Further sub directories in each directory are broken into topic for examples and
 
 ## Contents
 
-### homework/
+### [homework/](homework/)
 ### - lab_1/
 - countline.sh
 - text.txt
