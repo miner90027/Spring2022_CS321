@@ -10,12 +10,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <csignal>
+#include <chrono>
 #include <unistd.h>
 #include <sys/wait.h>
 using std::cout;
 using std::endl;
 
 void sig_handler(int signum);
+int numGen(int max);
 int pid;
 
 /******************************************/
@@ -38,12 +40,16 @@ int main (void){
 		cout << "[son] pid " << getpid() << " from [parent] pid " << getppid() << endl;
 
 		// send signal to parent
-		kill(getppid(), SIGUSR1);
-		kill(getppid(), SIGUSR2);
+		if(numGen(10) % 2 != 0)
+			kill(getppid(), SIGUSR1);
+		else
+			kill(getppid(), SIGUSR2);
 
 		// check parent status
 		waitpid(getppid(), &status, 0);
-		//sleep(1);
+
+		// sleep for 1 to 5 seconds before next loop
+		sleep(numGen(5));
 		}while(WIFEXITED(status));// loop while parent is alive.
 		exit(0);// exit when parent exits
 	}
@@ -52,11 +58,14 @@ int main (void){
 	/******************************************/
 	/***           Parent Process           ***/
 	/******************************************/
-	while(1){
-		//wait(NULL);
+	while(1){ // loop indefinately
+		// search for interupt signal
 		signal(SIGINT, sig_handler);
+		// search for user signal 1
 		signal(SIGUSR1, sig_handler);
+		// search for user signal 2
 		signal(SIGUSR2, sig_handler);
+		// wait for child process completion befor exit
 		wait(NULL);
 	}
 }
@@ -66,21 +75,21 @@ int main (void){
 /******************************************/
 
 // sig_handler()
-// handles the signals 
+// handles the signals:
 //  - SIGUSR1
 //  - SIGUSR2
 //  - SIGINT
 // makes sure that child process ends when the parent process in sent
 //  an interupt signal
 void sig_handler(int signum){
-	if(signum == SIGUSR1){
-		cout << "Received SIGUSR1" << endl;
+	if(signum == SIGUSR1 && pid != 0){
+		cout << "Parent received SIGUSR1" << endl;
 	}
 
-	if(signum == SIGUSR2){
-		cout << "Received SIGUSR2" << endl;
+	if(signum == SIGUSR2 && pid != 0){
+		cout << "Parent received SIGUSR2" << endl;
 	}
-	
+
 	if(signum == SIGINT){
 		if(pid == 0){
 			cout << "\nChild terminated"<< endl;
@@ -93,4 +102,15 @@ void sig_handler(int signum){
 			exit(0);
 		}
 	}
+}
+
+// numGen
+// Generates a random number between 1 and the maximum input value
+// returns the generated number
+int numGen(int max){
+	std::srand(std::time(nullptr));
+
+	int randNum = 1 + std::rand()/((RAND_MAX + 1u) / max);
+
+	return randNum;
 }
