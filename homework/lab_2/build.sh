@@ -1,3 +1,4 @@
+#!/bin/bash
 # Verify that at least a parameter
 if(( $# < 1))
 then
