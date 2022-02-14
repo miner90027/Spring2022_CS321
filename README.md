@@ -19,6 +19,8 @@ Further sub directories in each directory are broken into topic for examples and
 - build.sh
 - sample_1.c
 - lab_2.cpp
+### [- lab_3](homework/lab_3/)
+- build.sh
 ---
 ### [examples/](examples/)
 ### [- shell/](examples/shell/)
