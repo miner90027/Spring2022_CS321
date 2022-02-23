@@ -43,3 +43,8 @@ Further sub directories in each directory are broken into topic for examples and
  - demoMultiThread.c
  - demoSemaphore.c
  - demoDeadLock.c
+### [- memory/](examples/memory)
+ - CommandSequence.txt
+ - main.cpp
+ - pal.cpp
+ - pal.h
