@@ -21,6 +21,8 @@ Further sub directories in each directory are broken into topic for examples and
 - lab_2.cpp
 ### [- lab_3](homework/lab_3/)
 - build.sh
+- server.c
+- client1.c
 ---
 ### [examples/](examples/)
 ### [- shell/](examples/shell/)
