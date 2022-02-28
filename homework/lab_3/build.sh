@@ -12,11 +12,11 @@ else
 		then
 			# compile the passed file
 			# create an exacutable for the file passed
-			g++ "$file.c" -o "$file"
+			g++ "$file.c" -lpthread -lrt -o "$file"
 		fi
 		if [[ -r "$file.cpp" ]]
 		then
-			g++ "$file.cpp" -o "$file"
+			g++ "$file.cpp" -lpthread -lrt -o "$file"
 
 		else
 			# Printe error statements if cannot read the file
