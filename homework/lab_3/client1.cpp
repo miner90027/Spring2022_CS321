@@ -1,16 +1,25 @@
-// Client side C/C++ program to demonstrate Socket programming
+/*
+ * client1.cpp
+ * Aleks McCormick & ...
+ * 2022/03/02
+ * Spring 2022 CS321
+ * Client side C/C++ program to demonstrate Socket programming
+ */
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <iostream>
+#include <string>
 #define PORT 8080
    
 int main(int argc, char const *argv[])
 {
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
-    char *hello = "Hello from client";
+    std::string message;
+    
     char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -33,9 +42,28 @@ int main(int argc, char const *argv[])
         printf("\nConnection Failed \n");
         return -1;
     }
-    send(sock , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
-    valread = read( sock , buffer, 1024);
-    printf("%s\n",buffer );
+
+	std::cout << "Connected to chat server. Type EXIT to end the connection." << std::endl;
+	
+    do{
+    	std::cin.clear();
+    	std::cin.sync();
+    	// Receive message from user
+		std::cin >> message;
+		if(!message.compare("EXIT")){
+			message = "Client has left conversation.";
+
+			send(sock, message.c_str(), message.size(), 0);
+			break;
+		}
+
+    	// send message to server
+	    send(sock , message.c_str() , message.size() , 0 );
+	    //printf("Hello message sent\n");
+	    
+	    //receive message from server
+	    valread = read( sock , buffer, 1024);
+	    printf("%s\n",buffer );
+    }while(true);
     return 0;
 }
