@@ -1,4 +1,5 @@
-//Example code: A simple server side code, which echos back the received message.
+
+			//Example code: A simple server side code, which echos back the received message.
 //Handle multiple socket connections with select and fd_set on Linux
 #include <stdio.h>
 #include <string.h> //strlen
@@ -29,7 +30,7 @@ int main(int argc , char *argv[])
 		
 	//char buffer[1025]; //data buffer of 1K
 	char buffer[1024] = {0};
-    char buffer2[1024] = {0};
+    
 	
 	//set of socket descriptors
 	fd_set readfds;
@@ -158,7 +159,7 @@ int main(int argc , char *argv[])
 				{
 					client_socket[i] = new_socket;
 					printf("Adding to list of sockets as %d\n" , i);
-						
+					
 					break;
 				}
 			}
@@ -183,10 +184,24 @@ int main(int argc , char *argv[])
                     buffer[i] = 0;
                 }
 
+                
+                
+                valread = read( sd , buffer, 1024);
+    // if the buffer contains the string our client sends after EXIT is entered 
+    // then we need to close (i.e. somebody disconnected)
+                char * leftMsg = "Client has left conversation."; 
+                bool leaving = true;
+                printf("printing current buffer: ");
+                cout << buffer << endl;
 
+                for(int i=0; i< strlen(leftMsg); i++){
+                    if (buffer[i] != leftMsg[i]){ leaving = false;}
+                    //cout <<  buffer[i] << " " << leftMsg[i] << endl;
+                    
+                   }
+                
 
-
-				if ((valread = read( sd , buffer, 1024)) == 0)
+				if ((valread == 0) || leaving)
 				{
 					//Somebody disconnected , get his details and print
 					getpeername(sd , (struct sockaddr*)&address , \
@@ -203,7 +218,7 @@ int main(int argc , char *argv[])
 				//send the message that came in
 				else
 				{
-                    printf("it was a message\n"); // don't get here for some reason??
+                    printf("MESSAGE READ FROM CLIENT AT PORT: %i\n",sd ); 
 					//set the string terminating NULL byte on the end
 					//of the data read
 					buffer[valread] = '\0';
@@ -233,4 +248,3 @@ int main(int argc , char *argv[])
 		
 	return 0;
 }
-
