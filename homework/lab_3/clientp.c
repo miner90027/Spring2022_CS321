@@ -16,6 +16,8 @@
 
 using std:: endl;
 using std:: cout;
+using std::cin;
+using std::getline;
    
 int main(int argc, char const *argv[])
 {
@@ -52,7 +54,8 @@ int main(int argc, char const *argv[])
     	std::cin.clear();
     	std::cin.sync();
     	// Receive message from user
-		std::cin >> message;
+		//std::cin >> message;
+	    getline(cin,message); // to get whole line including spaces
 		if(!message.compare("EXIT")){
 			message = "Client has left conversation.";
 
