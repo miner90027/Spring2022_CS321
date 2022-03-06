@@ -1,6 +1,6 @@
 /*
  * client1.cpp
- * Aleks McCormick & ...
+ * Aleks McCormick & Enigma Adams
  * 2022/03/02
  * Spring 2022 CS321
  * Client side C/C++ program to demonstrate Socket programming
@@ -13,6 +13,11 @@
 #include <iostream>
 #include <string>
 #define PORT 8080
+
+using std::endl;
+using std::cout;
+using std::cin;
+using std::getline;
    
 int main(int argc, char const *argv[])
 {
@@ -45,11 +50,11 @@ int main(int argc, char const *argv[])
 
 	std::cout << "Connected to chat server. Type EXIT to end the connection." << std::endl;
 	
-    do{
+    do{ 
     	std::cin.clear();
     	std::cin.sync();
     	// Receive message from user
-		std::cin >> message;
+	    getline(cin,message); // to get whole line including spaces
 		if(!message.compare("EXIT")){
 			message = "Client has left conversation.";
 
@@ -59,11 +64,15 @@ int main(int argc, char const *argv[])
 
     	// send message to server
 	    send(sock , message.c_str() , message.size() , 0 );
-	    //printf("Hello message sent\n");
-	    
+
+		//clear out buffer for next round
+		for(int i = 0; i< sizeof(buffer); i++){ buffer[i] = 0;}
+
 	    //receive message from server
 	    valread = read( sock , buffer, 1024);
-	    printf("%s\n",buffer );
+
+    	printf("%s\n",buffer );
+
     }while(true);
     return 0;
 }
