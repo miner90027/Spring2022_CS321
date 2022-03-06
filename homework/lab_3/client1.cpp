@@ -103,5 +103,5 @@ void* receiveM(void *ptr){
 	    //receive message from server
 	    valread = read( sock , buffer, 1024);
 
-    	printf("%s\n",buffer );
+    	cout << "Received: " << buffer << endl;
 }
