@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
@@ -55,14 +56,20 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
-	std::cout << "Connected to chat server. Type EXIT to end the connection." << std::endl;
+	std::cout << "Connected to chat server. Type 'Ctrl C' to end the connection." << std::endl;
 	
     do{
+
     	pthread_create(&send, NULL, sendM, NULL);
-		pthread_create(&receive, NULL, receiveM, NULL);
+    	if(fork() == 0){
+			pthread_create(&receive, NULL, receiveM, NULL);
+			pthread_join(receive, NULL);
+		}
+
+		//wait(NULL);
 
 		pthread_join(send, NULL);
-		pthread_join(receive, NULL);
+		//pthread_join(receive, NULL);
 
     }while(true);
     return 0;
@@ -75,13 +82,13 @@ void* sendM(void *ptr){
     	std::cin.sync();
     	// Receive message from user
 	    getline(cin,message); // to get whole line including spaces
-		if(!message.compare("EXIT")){
-			message = "Client has left conversation.";
-
-			send(sock, message.c_str(), message.size(), 0);
-			exit(0);
+		/*if(!message.compare("EXIT")){
+			//message = "Client has left conversation.";
+			cout << "You have left the conversation" << endl;
+			//send(sock, message.c_str(), message.size(), 0);
+			//exit(0);
 			//break;
-		}
+		}*/
 
     	// send message to server
 	    send(sock , message.c_str() , message.size() , 0 );
