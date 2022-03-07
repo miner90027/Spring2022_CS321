@@ -188,7 +188,14 @@ for (i = 0; i < max_clients; i++)
 {
             //printf("some other IO operation detected"); prints 30 times as expected
 sd = client_socket[i];
-           
+    
+    
+// set socket to nonblocking
+int flags = fcntl(sd, F_GETFL, 0);
+fcntl(sd, F_SETFL, flags | O_NONBLOCK);
+    
+    
+    
 //while(true){
 if (FD_ISSET( sd , &readfds))
 {
