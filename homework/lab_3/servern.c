@@ -43,8 +43,8 @@ char buffer[1024] = {0};
 //set of socket descriptors
 fd_set readfds;
 
-//a message
-char *message = "ECHO Daemon v1.0 \r\n";
+	//a message
+	char *message = "ECHO Daemon v1.0 \r\n";
     char *hello = "Hello from server";
     char *noOtherClientMsg = "couldn't find another client to send to\n";
 
@@ -201,7 +201,7 @@ if (FD_ISSET( sd , &readfds))
 {
 //Check if it was for closing , and also read the
 //incoming message
-                printf("if entered\n");
+                //printf("if entered\n");
 
                 // clearout old buffer
                 for(int i = 0; i<max_clients; i++){
@@ -211,7 +211,7 @@ if (FD_ISSET( sd , &readfds))
 
 
 //Client has left conversation.
-// quits if even one client leaves (enters "EXIT")
+// quits if even one client leaves (enters "BYE")
 valread = read( sd , buffer, 1024);
 //bool clientHere = true;
 //if(buffer == "Client has left conversation."){ clientHere = false;}
@@ -237,7 +237,7 @@ exit(0);
 //send the message that came in
 else
 {
-                    printf("it was a message\n"); // don't get here for some reason??
+                    //printf("it was a message\n"); // don't get here for some reason??
 //set the string terminating NULL byte on the end
 //of the data read
 buffer[valread] = '\0';
@@ -248,16 +248,16 @@ buffer[valread] = '\0';
 
                     // pick another client to send it to (a neigbor you don't get to pick who)
                     if(client_socket[i-1] != 0){
-send(client_socket[i-1], buffer , strlen(buffer) , 0 );
-                        printf("message sent to previous client\n");
+						send(client_socket[i-1], buffer , strlen(buffer) , 0 );
+                    //    printf("message sent to previous client\n");
                     }
                     else if(client_socket[i+1] != 0){
-                    send(client_socket[i+1], buffer, strlen(buffer), 0);
-                    printf("message sent to next client\n");
+                    	send(client_socket[i+1], buffer, strlen(buffer), 0);
+                   	//	printf("message sent to next client\n");
                     }
                     else{
-                    send(sd, noOtherClientMsg , strlen(noOtherClientMsg), 0);
-                    printf("server couldn't find another client to send to\n");
+                    	send(sd, noOtherClientMsg , strlen(noOtherClientMsg), 0);
+                    	printf("server couldn't find another client to send to\n");
                     }
                  
 }

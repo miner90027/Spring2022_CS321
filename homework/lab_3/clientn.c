@@ -37,7 +37,7 @@ void sigintHandler(int sig_num);
 int main(int argc, char const *argv[])
 {
 
-signal(SIGINT, sigintHandler);
+	signal(SIGINT, sigintHandler);
 
 
     struct sockaddr_in serv_addr;
@@ -68,71 +68,56 @@ signal(SIGINT, sigintHandler);
         return -1;
     }
 
-// MAKE STDIN NON-BLOCKING
-int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-// MAKE THE SOCKET NON-BLOCKING
-flags = fcntl(sock, F_GETFL, 0);
-fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+	// MAKE STDIN NON-BLOCKING
+	int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+	fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+	// MAKE THE SOCKET NON-BLOCKING
+	flags = fcntl(sock, F_GETFL, 0);
+	fcntl(sock, F_SETFL, flags | O_NONBLOCK);
 
 
 
-std::cout << "Connected to chat server. Type 'Ctrl C' to end the connection." << std::endl;
+	std::cout << "Connected to chat server. Type 'BYE' to end the connection." << std::endl;
 
     do{
     sendM();
     receiveM();
    
-    sleep(1);
+    //sleep(1);
     }while(true);
    
     return 0;
 }
 
 void sendM(){
-sleep(1);
-std::string message;
+	std::string message;
 
     std::cin.clear();
     std::cin.sync();
     // Receive message from user
-   if(getline(cin,message)){ // to get whole line including spaces
-if(!message.compare("EXIT")){
-message = "Client has left conversation.";
-cout << "You have left the conversation" << endl;
-//send(sock, message.c_str(), message.size(), 0);
-//exit(0);
-//break;
-}
+   	if(getline(cin,message)){ // to get whole line including spaces
        
-       
-        if(!message.compare("Client has left conversation.")){
-        printf("we outa here\n");
+        if(!message.compare("BYE")){
+		cout << "----You have left the conversation.----" << endl;
         // send message to server
-        printf("sending message...\n");
-        sleep(1);
         send(sock , message.c_str() , message.size() , 0 );
         // then exit
         exit(0);
         }
 
-    // send message to server
-        printf("sending message...\n");
-        sleep(1);
-   send(sock , message.c_str() , message.size() , 0 );
+    	// send message to server
+        //printf("sending message...\n");
+        //sleep(1);
+   		send(sock , message.c_str() , message.size() , 0 );
     }
 }
 
 void receiveM(){
-sleep(1);
-char buffer[1024] = {0};
+	char buffer[1024] = {0};
 
-//clear out buffer for next round
-//for(int i = 0; i< sizeof(buffer); i++){ buffer[i] = 0;}
-
-   //receive message from server
+   	//receive message from server
     if(valread = read( sock , buffer, 1024) > 0){
-    cout << "Received: " << buffer << endl;
+    	cout << "Received: " << buffer << endl;
     }
 
 }
