@@ -1,3 +1,7 @@
+
+
+
+
 //Handle multiple socket connections with select and fd_set on Linux
 #include <stdio.h>
 #include <signal.h>
@@ -22,7 +26,7 @@ using std::cout;
 using std::endl;
 
 void sigintHandler(int sig_num);
-//bool triedToLeave = false;
+
 
 
 int main(int argc , char *argv[])
@@ -43,10 +47,10 @@ char buffer[1024] = {0};
 //set of socket descriptors
 fd_set readfds;
 
-	//a message
-	char *message = "ECHO Daemon v1.0 \r\n";
-    char *hello = "Hello from server";
-    char *noOtherClientMsg = "couldn't find another client to send to\n";
+//a message
+char *message = "ECHO Daemon v1.0 \r\n";
+char *hello = "Hello from server";
+char *noOtherClientMsg = "couldn't find another client to send to\n";
 
 //initialise all client_socket[] to 0 so not checked
 for (i = 0; i < max_clients; i++)
@@ -70,9 +74,10 @@ perror("setsockopt");
 exit(EXIT_FAILURE);
 }
 
-// SET SOCKET TO NONBLOCKING
+// SET SOCKET TO NONBLOCKING 
 int flags = fcntl(master_socket, F_GETFL, 0);
 fcntl(master_socket, F_SETFL, flags | O_NONBLOCK);
+
 
 
 //type of socket created
@@ -125,6 +130,10 @@ if(sd > max_sd)
 max_sd = sd;
 }
 
+
+
+
+
 //wait for an activity on one of the sockets , timeout is NULL ,
 //so wait indefinitely
 activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);
@@ -135,18 +144,21 @@ printf("select error");
 }
 
 //If something happened on the master socket ,
-//then its an incoming connection
-if (FD_ISSET(master_socket, &readfds) /*&& !triedToLeave*/)
+//then its an incoming connection 
+// or it means we just types Ctrl C
+if (FD_ISSET(master_socket, &readfds))
 {
+printf("something happened on the master socket\n");
 
+printf("accepting\n");
     if ((new_socket = accept(master_socket,
     (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
     {
         perror("accept");
         printf("couldn't accept\n");
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
     }
-
+    else{
 //inform user of socket number - used in send and receive commands
 printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
 (address.sin_port));
@@ -181,27 +193,25 @@ break;
 }
 }
 }
+}
+
 
 //else its some IO operation on some other socket
-//triedToLeave = false;
+
 for (i = 0; i < max_clients; i++)
 {
-            //printf("some other IO operation detected"); prints 30 times as expected
+            
 sd = client_socket[i];
-    
-    
-// set socket to nonblocking
+           
+// SET SOCKET TO NONBLOCKING 
 int flags = fcntl(sd, F_GETFL, 0);
 fcntl(sd, F_SETFL, flags | O_NONBLOCK);
-    
-    
-    
-//while(true){
+
 if (FD_ISSET( sd , &readfds))
 {
 //Check if it was for closing , and also read the
 //incoming message
-                //printf("if entered\n");
+                printf("something happened on socket %d on list\n", i);
 
                 // clearout old buffer
                 for(int i = 0; i<max_clients; i++){
@@ -211,16 +221,16 @@ if (FD_ISSET( sd , &readfds))
 
 
 //Client has left conversation.
-// quits if even one client leaves (enters "BYE")
-valread = read( sd , buffer, 1024);
+printf("reading\n");
 //bool clientHere = true;
 //if(buffer == "Client has left conversation."){ clientHere = false;}
 
 //if(!clientHere){printf("somebody exited\n");} // check if the above line works
 
-
+valread = read( sd , buffer, 1024);
 if (valread == 0 /* | !clientHere*/)
 {
+printf("somebody disconnected");
 //Somebody disconnected , get his details and print
 getpeername(sd , (struct sockaddr*)&address , \
 (socklen_t*)&addrlen);
@@ -230,14 +240,17 @@ inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
 //Close the socket and mark as 0 in list for reuse
 close( sd );
 client_socket[i] = 0;
-exit(0);
+//exit(0);
 }
 
+else if(valread < 0 ){
+printf("couldn't read right now\n");
+}
            
 //send the message that came in
 else
 {
-                    //printf("it was a message\n"); // don't get here for some reason??
+                    printf("it was a message\n"); // don't get here for some reason??
 //set the string terminating NULL byte on the end
 //of the data read
 buffer[valread] = '\0';
@@ -248,32 +261,56 @@ buffer[valread] = '\0';
 
                     // pick another client to send it to (a neigbor you don't get to pick who)
                     if(client_socket[i-1] != 0){
-						send(client_socket[i-1], buffer , strlen(buffer) , 0 );
-                    //    printf("message sent to previous client\n");
+                        send(client_socket[i-1], buffer , strlen(buffer) , 0 );
+                        printf("message sent to previous client\n");
                     }
                     else if(client_socket[i+1] != 0){
-                    	send(client_socket[i+1], buffer, strlen(buffer), 0);
-                   	//	printf("message sent to next client\n");
+                    send(client_socket[i+1], buffer, strlen(buffer), 0);
+                    printf("message sent to next client\n");
                     }
                     else{
-                    	send(sd, noOtherClientMsg , strlen(noOtherClientMsg), 0);
-                    	printf("server couldn't find another client to send to\n");
+                    send(sd, noOtherClientMsg , strlen(noOtherClientMsg), 0);
+                    printf("server couldn't find another client to send to\n");
                     }
+
+// make sure BYE wasnt sent and exit it if was
+            bool byeSent = true;
+            char* goodBye = "BYE";
+            char* sentByeMsg = "Client sent BYE so server process has ended";
+            for(int i=0; i<strlen(buffer); i++){
+                cout << buffer[i] << " " << goodBye[i] << endl;
+                if (buffer[i] != goodBye[i] || (strlen(buffer) != strlen(goodBye)) ){
+                byeSent = false;
+                }
+            }
+            if( byeSent){ 
+            
+            printf("BYE was sent, exiting server process\n");
+            send(sd, sentByeMsg, strlen(sentByeMsg), 0);
+            exit(0);
+            }
                  
 }
 }
 }
 }
 
+
 return 0;
 }
 
+
 void sigintHandler(int sig_num){
 signal(SIGINT, sigintHandler);
-//printf("cannot be terminated with Ctrl C\n");
-//triedToLeave = true;
+printf("cannot be terminated with Ctrl C\n");
 //exit(0);
 return;
 }
-
    
+
+
+
+
+
+
+
