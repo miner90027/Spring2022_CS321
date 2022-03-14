@@ -22,7 +22,12 @@ Further sub directories in each directory are broken into topic for examples and
 ### [- lab_3](homework/lab_3/)
 - build.sh
 - server.cpp
+- serverf.c
+- servergfg.c
+- servern.c
 - client1.cpp
+- clientf.c
+- clientn.c
 ---
 ### [examples/](examples/)
 ### [- shell/](examples/shell/)
