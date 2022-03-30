@@ -28,6 +28,8 @@ Further sub directories in each directory are broken into topic for examples and
 - client1.cpp
 - clientf.c
 - clientn.c
+### [- lab_4](homework/lab_4)
+- lab_4.sh
 ---
 ### [examples/](examples/)
 ### [- shell/](examples/shell/)
