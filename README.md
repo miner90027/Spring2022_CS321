@@ -57,3 +57,6 @@ Further sub directories in each directory are broken into topic for examples and
  - main.cpp
  - pal.cpp
  - pal.h
+### [- sysAdmin/](examples/sysAdmin)
+ - commands.sh
+ - make_n_check_fs.sh
