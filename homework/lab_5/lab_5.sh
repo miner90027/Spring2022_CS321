@@ -20,31 +20,31 @@ docker start lab_5
 
 # sudo docker start -ai lab_5
 # verify everything up to date
-docker exec -u 0 lab_5 /bin/bash -c "apt-get update && apt-get -y upgrade"
+docker exec -u 0 lab_5 bash -i -c "apt-get update && apt-get -y upgrade"
 
 # change file permissions
-docker exec -u 0 lab_5 /bin/bash -c "chmod 777 anaconda.sh"
+docker exec -u 0 lab_5 bash -i -c "chmod 777 anaconda.sh"
 
 # Run the anaconda installer in silent mode
-docker exec -u 0 lab_5 /bin/bash -c "./anaconda.sh -b -p"
+docker exec -u 0 lab_5 bash -i -c "./anaconda.sh -b -p"
 
 # append .bashrc as needed to run conda
-docker exec -u 0 lab_5 /bin/bash -c 'echo "export PATH=/root/anaconda3/bin:$PATH" >> ~/.bashrc'
+docker exec -u 0 lab_5 bash -i -c 'echo "export PATH=/root/anaconda3/bin:$PATH" >> ~/.bashrc'
 
-docker exec -it -u 0 lab_5 /bin/bash -c 'eval "$(/root/anaconda3/conda shell.bash hook)"'
+docker exec -it -u 0 lab_5 bash -i -c 'eval "$(/root/anaconda3/conda shell.bash hook)"'
 
 #docker restart lab_5
 
 #docker exec -u 0 lab_5 /root/anaconda3/bin/conda "init"
-docker exec -u 0 lab_5 /bin/bash -c "conda init"
+docker exec -u 0 lab_5 bash -i -c "conda init"
 
 docker restart lab_5
 
 # create Conda environment
-docker exec -u 0 lab_5 /bin/bash -c "conda create -q --name note"
+docker exec -u 0 lab_5 bash -i -c "conda create -y --name note"
 
 # Activate conda environment
-docker exec -u 0 lab_5 /bin/bash -c "codna activate note"
+docker exec -u 0 lab_5 bash -i -c "conda activate note"
 
 # install jupyter
-docker exec -u 0 lab_5 /bin/bash -c "conda install -c -y note jupyter"
+docker exec -u 0 lab_5 bash -i -c "conda install -y -c anaconda jupyter"
