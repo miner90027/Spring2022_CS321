@@ -1,6 +1,4 @@
 
-
-
 #include <vector>
 #include <string>
 #include <istream>
@@ -22,7 +20,7 @@ using std::cout;
 
 
 //function declarations
-vector<string> lineToTokens(const string& line); // tokenizer
+vector<string> lineToTokens(const string& line, char delim); // tokenizer
 int myHelpFunc(vector<string> &args);  // buitlin functions
 int myCdFunc(vector<string> &args);
 int myExitFunc(vector<string> &args);
@@ -36,51 +34,31 @@ int myExecute(vector<string> &args);
 //global vars/contants
 vector<string> names{"help", "cd", "exit", "print"};
 vector<int(*)(vector<string>&)> funcPtrs{&myHelpFunc, &myCdFunc, &myExitFunc, &myPrintFunc};
-//funcPtrs.push_back(&myHelpFunc);
-//funcPtrs.push_back(&myCdFunc);
-//funcPtrs.push_back(&myExitFunc);
-
-
-
-
-
-
-
-
 
 
 int main(){
 
 // variables  
+    vector<string> tokenGroups;
     vector<string> tokens;
     string line;
     int status;
     const regex pattern("^[a-zA-Z0-9-./_ ]+$");
     char buffer[1000];
+    int numCmds; // number of commands in an entered line
+    
+
 
 // promt and response loop
 do{
 if(getcwd(buffer,sizeof(buffer)) != NULL){cout << buffer;}
 else{perror("getcdw() error");}
-cout << ">";
-//string helpName = "help";
-//string cdName = "cd";
-//string exitName = "exit";
-
-//auto helpFuncPtr = &myHelpFunc;
-//auto cdFuncPtr = &myCdFunc;
-//auto exitFuncPtr = &myExitFunc;
-
+cout << "> ";
 
 // read in line
     if(std::getline(cin, line)){
 // make sure line has something 
         if(line.size() <= 0){ 
-            // go back to loop top
-        }
-// make sure the line only contains A-Z, a-z, 0-9 -./_ (dash, dot, forward slash, underscore)
-        else if(!regex_match(line,pattern)){
-            cout << "invalid character entered try again\n";
             // go back to loop top
         }
 
@@ -91,35 +69,27 @@ cout << ">";
         //cout << "number of chars befor: " << line.size();
         if(line.size() > 100){ 
             cout << "Line longer than 100 chars entered\n";
-            cout << "Note it will be truncated to 100 chars\n"; 
-            line = line.substr(0,100);
-            //cout << "line: " << line << "\n"; // TESTING    
+            cout << "Note: it will be truncated to 100 chars\n"; 
+            line = line.substr(0,100);   
         }
-        //cout << "\nnumber of char entered after: " << line.size(); //TESTING
 
-// process line 
-    tokens = lineToTokens(line);
+// process line into token groups
+        tokenGroups = lineToTokens(line, '&');
 
+for(int i=0; i< tokenGroups.size(); i++){
+    // make sure the line only contains A-Z, a-z, 0-9 -./_ (dash, dot, forward slash, underscore)
+        if(!regex_match(tokenGroups.at(i),pattern)){
+            cout << "invalid character entered try again\n";
+            break; // don't keep processing
+        }
 
-//sepparate token group out
-    
-// test we got tokens ... .JUST FOR TESTING
-    cout << "\ntokens: \n";
-    for(int i=0; i<tokens.size(); i++){ 
-        cout << tokens.at(i) << ":";
-    }
-    cout << "\n";
+    // break the group up into tokens
+    tokens = lineToTokens(tokenGroups.at(i),' ');
 
-
-// call the coresponding function or execute the specified file
-//int success = myLaunch(tokens);
-//if(success){cout << "success";}
-//else{ cout << "returned but no success";}
-//if(myHelpFunc(tokens)==0){cout << "returned from help\n";} // FOR TESTING
-//if(myCdFunc(tokens)==0){cout << "returned form cd\n";} // FOR TESTING
-//if(myExitFunc(tokens)==0){cout << "return from exit\n";} // FOR TESTING
-        status = myExecute(tokens);
-
+    // call the coresponding function or execute the specified file
+    status = myExecute(tokens); // the only thing is I don't think  exit will exit unless its the last command ented on a line but I believ this is the behavior of the shell in my linux machine so that should be fine
+}
+        
 
     }
     }
@@ -138,7 +108,7 @@ return 0;
 
 
 // break a single line into tokens
-vector<string> lineToTokens(const string& line) {
+vector<string> lineToTokens(const string& line, char delim) {
 	vector<string> vec;
 	int len = 0; // the length of the current word
 	int pos = 0; // the position we recorded the last space at (+1 to avoid copying the space character)
@@ -146,13 +116,13 @@ vector<string> lineToTokens(const string& line) {
 
 	for (auto i = line.begin(); i < line.end(); i++) {
 
-		if (*lastIt == ' ') {
+		if (*lastIt == delim) {
 			pos = i - line.begin();
 			len = 0;
 			// and move on...
 		}
 
-		else if(*i == ' '){
+		else if(*i == delim){
 			string newToken = line.substr(pos, len);
 			vec.push_back(newToken);
 			len = 0;
@@ -195,7 +165,6 @@ int myCdFunc(vector<string> &args){
     }
 
     else{
-        //cout <<"\nthe important arg: " << args.at(1); // TESTING
        if(chdir(args.at(1).c_str()) != 0){
             perror("my shell perror");
         }
@@ -279,7 +248,6 @@ int myExecute(vector<string> &args){
     else{
         for(int i=0; i< funcPtrs.size(); i++){ // for all of the builtins
             if(args.at(0) == names.at(i)){ // if the first argument is a builtin
-                cout << "running my " << names.at(i) << "function\n"; // TESTING
                 return (funcPtrs.at(i))(args); // run it with its arguments
             }
         }    
@@ -287,6 +255,10 @@ int myExecute(vector<string> &args){
     return myLaunch(args); // otherwise launch the program with its arguments 
     }
 }
+
+
+
+
 
 
 
