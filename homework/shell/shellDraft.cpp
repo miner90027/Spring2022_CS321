@@ -1,6 +1,5 @@
 
 
-
 #include <vector>
 #include <string>
 #include <istream>
@@ -26,6 +25,7 @@ vector<string> lineToTokens(const string& line); // tokenizer
 int myHelpFunc(vector<string> &args);  // buitlin functions
 int myCdFunc(vector<string> &args);
 int myExitFunc(vector<string> &args);
+int myPrintFunc(vector<string> &args);
 int myLaunch(vector<string> &args);
 int myExecute(vector<string> &args);
 
@@ -33,8 +33,8 @@ int myExecute(vector<string> &args);
 
 
 //global vars/contants
-vector<string> names{"help", "cd", "exit"};
-vector<int(*)(vector<string>&)> funcPtrs{&myHelpFunc, &myCdFunc, &myExitFunc};
+vector<string> names{"help", "cd", "exit", "print"};
+vector<int(*)(vector<string>&)> funcPtrs{&myHelpFunc, &myCdFunc, &myExitFunc, &myPrintFunc};
 //funcPtrs.push_back(&myHelpFunc);
 //funcPtrs.push_back(&myCdFunc);
 //funcPtrs.push_back(&myExitFunc);
@@ -95,10 +95,11 @@ cout << "<";
         //cout << "\nnumber of char entered after: " << line.size(); //TESTING
 
 // process line 
-        tokens = lineToTokens(line);
+    tokens = lineToTokens(line);
 
 
-
+//sepparate token group out
+    
 // test we got tokens ... .JUST FOR TESTING
     cout << "\ntokens: \n";
     for(int i=0; i<tokens.size(); i++){ 
@@ -191,6 +192,7 @@ int myCdFunc(vector<string> &args){
     }
 
     else{
+        cout <<"\nthe important arg: " << args.at(1);
        if(chdir(args.at(1).c_str()) != 0){
             perror("my shell perror");
         }
@@ -202,6 +204,15 @@ return 1; // 1 so we'll loop again and ask for another command to run
 int myExitFunc(vector<string> &args){
 return 0; // zero so the ststus will stop the do while loop int main
 }
+
+// prints the current pid
+int myPrintFunc(vector<string> &args){
+    cout << "current process ID: " << getpid() << "\n";   
+    return 1;
+}
+
+
+
 
 // run the program or command specified in the file passed
 // for non-builtin commands
@@ -261,17 +272,17 @@ int myExecute(vector<string> &args){
         // an empty command was entered
         return 1;        
     }
+
     else{
         for(int i=0; i< funcPtrs.size(); i++){ // for all of the builtins
             if(args.at(0) == names.at(i)){ // if the first argument is a builtin
                 cout << "running my " << names.at(i) << "function\n"; // TESTING
-                vector<string> argsRem(args.begin()+i-1, args.end()); // argsRem includes the command and the args after it
-                for(auto i : argsRem){ cout << i << "\n"; } // TESTING
-                return (funcPtrs.at(i))(argsRem); // run it with the rest of the arguments 
+                return (funcPtrs.at(i))(args); // run it with its arguments
             }
         }    
+    
+    return myLaunch(args); // otherwise launch the program with its arguments 
     }
-return myLaunch(args); // otherwise launch the program 
 }
 
 
@@ -280,3 +291,25 @@ return myLaunch(args); // otherwise launch the program
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
