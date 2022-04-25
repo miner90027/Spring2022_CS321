@@ -1,3 +1,5 @@
+
+
 #include <vector>
 #include <string>
 #include <istream>
@@ -45,6 +47,15 @@ vector<int(*)(vector<string>&)> funcPtrs{&myHelpFunc, &myCdFunc, &myExitFunc};
 
 int main(){
 
+// variables  
+    vector<string> tokens;
+    string line;
+    int status;
+
+
+// promt and response loop
+do{
+cout << "<";
 //string helpName = "help";
 //string cdName = "cd";
 //string exitName = "exit";
@@ -54,42 +65,38 @@ int main(){
 //auto exitFuncPtr = &myExitFunc;
 
 
-// variables  
-vector<string> tokens;
-string line;
-
-
-
 // read in line... (?) just stdin for now but I think I need it for a file too?
-if(std::getline(cin, line)){
+    if(std::getline(cin, line)){
  
 // process line 
-tokens = lineToTokens(line);
+    tokens = lineToTokens(line);
 
 
 
 // test we got tokens ... .JUST FOR TESTING
-for(int i=0; i<tokens.size(); i++){ 
-    cout << tokens.at(i) << ":";
-}
-cout << "\n";
+//for(int i=0; i<tokens.size(); i++){ 
+//    cout << tokens.at(i) << ":";
+//}
+//cout << "\n";
 
 
 // call the coresponding function or execute the specified file
-int success = myLaunch(tokens);
-if(success){cout << "success";}
-else{ cout << "returned but no success";}
+//int success = myLaunch(tokens);
+//if(success){cout << "success";}
+//else{ cout << "returned but no success";}
 //if(myHelpFunc(tokens)==0){cout << "returned from help\n";} // FOR TESTING
 //if(myCdFunc(tokens)==0){cout << "returned form cd\n";} // FOR TESTING
 //if(myExitFunc(tokens)==0){cout << "return from exit\n";} // FOR TESTING
+    status = myExecute(tokens);
 
 
+    }
 
-}
+    else{
+        cout << "coutln't getline \n";
+    }
+} while(status);
 
-else{
-    cout << "coutln't getline \n";
-}
 
 return 0;
 }
@@ -137,13 +144,13 @@ vector<string> lineToTokens(const string& line) {
 int myHelpFunc(vector<string> &args){
     cout << "CS321 simple shell\n";
     cout << "Type program names and arguments and hit enter\n";
-    cout << "The followling are builtin\n";
+    cout << "The following are builtin\n";
     
     for(auto i: names){
         cout << i << "\n";
     }
 
-return 0;
+return 1; // 1 so we prompt again (keep looping)
 }
 
 //changed directory to specifed place 
@@ -159,12 +166,12 @@ int myCdFunc(vector<string> &args){
             perror("my shell perror");
         }
     }
-return 0;
+return 1; // 1 so we'll loop again and ask for another command to run
 }
 
 // exits the process...(?)
 int myExitFunc(vector<string> &args){
-return 0;
+return 0; // zero so the ststus will stop the do while loop int main
 }
 
 // run the program or command specified in the file passed
@@ -227,13 +234,13 @@ int myExecute(vector<string> &args){
     else{
         for(int i=0; i< funcPtrs.size(); i++){ // for all of the builtins
             if(args.at(0) == names.at(i)){ // if the first argument is a builtin
+                cout << "running my " << names.at(i) << "function\n";
                 return (funcPtrs.at(i))(args); // run it 
             }
         }    
     }
 return myLaunch(args);
 }
-
 
 
 
