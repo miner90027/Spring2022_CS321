@@ -1,5 +1,6 @@
 
 
+
 #include <vector>
 #include <string>
 #include <istream>
@@ -9,6 +10,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <regex>
+using std::regex;
 using std::ostream;
 using std::istream;
 using std::string;
@@ -51,6 +54,7 @@ int main(){
     vector<string> tokens;
     string line;
     int status;
+    const regex pattern("^[a-zA-Z0-9-./_ ]+$");
 
 
 // promt and response loop
@@ -65,19 +69,42 @@ cout << "<";
 //auto exitFuncPtr = &myExitFunc;
 
 
-// read in line... (?) just stdin for now but I think I need it for a file too?
+// read in line
     if(std::getline(cin, line)){
- 
+// make sure line has something 
+        if(line.size() <= 0){ 
+            // go back to loop top
+        }
+// make sure the line only contains A-Z, a-z, 0-9 -./_ (dash, dot, forward slash, underscore)
+        else if(!regex_match(line,pattern)){
+            cout << "invalid character entered try again\n";
+            // go back to loop top
+        }
+
+        else{ // continue... to process stuff
+
+// make sure line isn't over 100 characters ( if it i it will be truncated and we keep going)
+// this is sort of an arbitrary limit since we used getline, but lets do it anyway
+        //cout << "number of chars befor: " << line.size();
+        if(line.size() > 100){ 
+            cout << "Line longer than 100 chars entered\n";
+            cout << "Note it will be truncated to 100 chars\n"; 
+            line = line.substr(0,100);
+            //cout << "line: " << line << "\n"; // TESTING    
+        }
+        //cout << "\nnumber of char entered after: " << line.size(); //TESTING
+
 // process line 
-    tokens = lineToTokens(line);
+        tokens = lineToTokens(line);
 
 
 
 // test we got tokens ... .JUST FOR TESTING
-//for(int i=0; i<tokens.size(); i++){ 
-//    cout << tokens.at(i) << ":";
-//}
-//cout << "\n";
+    cout << "\ntokens: \n";
+    for(int i=0; i<tokens.size(); i++){ 
+        cout << tokens.at(i) << ":";
+    }
+    cout << "\n";
 
 
 // call the coresponding function or execute the specified file
@@ -87,14 +114,16 @@ cout << "<";
 //if(myHelpFunc(tokens)==0){cout << "returned from help\n";} // FOR TESTING
 //if(myCdFunc(tokens)==0){cout << "returned form cd\n";} // FOR TESTING
 //if(myExitFunc(tokens)==0){cout << "return from exit\n";} // FOR TESTING
-    status = myExecute(tokens);
+        status = myExecute(tokens);
 
 
     }
-
+    }
+    
     else{
         cout << "coutln't getline \n";
     }
+
 } while(status);
 
 
@@ -218,6 +247,7 @@ int myLaunch(vector<string> &args){
         free(cArgs[i]);    
     }
     free(cArgs);
+    
 
     return 1; // 1 lets the calling function know we should promot for input again
 }
@@ -234,15 +264,15 @@ int myExecute(vector<string> &args){
     else{
         for(int i=0; i< funcPtrs.size(); i++){ // for all of the builtins
             if(args.at(0) == names.at(i)){ // if the first argument is a builtin
-                cout << "running my " << names.at(i) << "function\n";
-                return (funcPtrs.at(i))(args); // run it 
+                cout << "running my " << names.at(i) << "function\n"; // TESTING
+                vector<string> argsRem(args.begin()+i-1, args.end()); // argsRem includes the command and the args after it
+                for(auto i : argsRem){ cout << i << "\n"; } // TESTING
+                return (funcPtrs.at(i))(argsRem); // run it with the rest of the arguments 
             }
         }    
     }
-return myLaunch(args);
+return myLaunch(args); // otherwise launch the program 
 }
-
-
 
 
 
