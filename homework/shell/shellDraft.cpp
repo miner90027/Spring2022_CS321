@@ -1,5 +1,6 @@
 
 
+
 #include <vector>
 #include <string>
 #include <istream>
@@ -55,11 +56,13 @@ int main(){
     string line;
     int status;
     const regex pattern("^[a-zA-Z0-9-./_ ]+$");
-
+    char buffer[1000];
 
 // promt and response loop
 do{
-cout << "<";
+if(getcwd(buffer,sizeof(buffer)) != NULL){cout << buffer;}
+else{perror("getcdw() error");}
+cout << ">";
 //string helpName = "help";
 //string cdName = "cd";
 //string exitName = "exit";
@@ -192,7 +195,7 @@ int myCdFunc(vector<string> &args){
     }
 
     else{
-        cout <<"\nthe important arg: " << args.at(1);
+        //cout <<"\nthe important arg: " << args.at(1); // TESTING
        if(chdir(args.at(1).c_str()) != 0){
             perror("my shell perror");
         }
