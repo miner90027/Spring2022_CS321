@@ -1,4 +1,5 @@
 
+
 #include <vector>
 #include <string>
 #include <istream>
@@ -15,24 +16,26 @@ using std::istream;
 using std::string;
 using std::vector;
 using std::cin;
-using std::cout; 
+using std::cout;
+using std::endl; 
 
 
 
 //function declarations
-vector<string> lineToTokens(const string& line, char delim); // tokenizer
+vector<string> lineToTokens(const string& line, vector<char> delims); // tokenizer
 int myHelpFunc(vector<string> &args);  // buitlin functions
 int myCdFunc(vector<string> &args);
 int myExitFunc(vector<string> &args);
 int myPrintFunc(vector<string> &args);
 int myLaunch(vector<string> &args);
-int myExecute(vector<string> &args);
+int myExecute(vector<string> &args, char delim);
 
 
 
 
 //global vars/contants
 vector<string> names{"help", "cd", "exit", "print"};
+vector<char> delims{'&', ';'}; // things sepparating commands
 vector<int(*)(vector<string>&)> funcPtrs{&myHelpFunc, &myCdFunc, &myExitFunc, &myPrintFunc};
 
 
@@ -42,7 +45,7 @@ int main(){
     vector<string> tokenGroups;
     vector<string> tokens;
     string line;
-    int status;
+    int status = 1;
     const regex pattern("^[a-zA-Z0-9-./_ ]+$");
     char buffer[1000];
     int numCmds; // number of commands in an entered line
@@ -53,7 +56,7 @@ int main(){
 do{
 if(getcwd(buffer,sizeof(buffer)) != NULL){cout << buffer;}
 else{perror("getcdw() error");}
-cout << "% ";
+cout << "> ";
 
 // read in line
     if(std::getline(cin, line)){
@@ -73,10 +76,43 @@ cout << "% ";
             line = line.substr(0,100);   
         }
 
-// process line into token groups
-        tokenGroups = lineToTokens(line, '&');
 
-for(int i=0; i< tokenGroups.size(); i++){
+ //if the string isn;t terminated by & or ; append ;
+        bool terminatedRight = false;
+        for(int i=0; i<delims.size(); i++){
+            if(delims.at(i) == line.at(line.size() - 1)){
+                terminatedRight = true;
+            }
+        }
+        if(!terminatedRight){
+            line.append(";"); 
+        }
+
+//cout << "new line: " << line << endl; // TESTING
+
+// process line into token groups
+        tokenGroups = lineToTokens(line, delims);
+    //for(int i=0; i<tokenGroups.size()-1; i++){ // TESTING
+      //  cout <<"tokengroups: " << tokenGroups.at(i) << endl;
+   // }
+
+
+// the token group from the original line
+int tempPos;
+int lastPos = 0; // position right after the last deliminator we found
+for(int i=0; i< tokenGroups.size()-1; i++){
+    //cout << "looped\n"; //TESTING
+    int pos = line.size()-1; // will hold the position of the deliminator for 
+    //cout << "last pos: " << lastPos << endl; // TESTING
+    // search the line for the deliminator accociated with this token group
+    for(int j=0; j<delims.size(); j++){
+        tempPos = line.find(delims.at(j),lastPos);
+        if((pos > tempPos) && (tempPos > 0)){ pos = tempPos;}
+        
+    } // said delimator will be in line at pos
+    lastPos = pos + 1; // update the position to start form for the next loop
+    //cout << "new last pos: " << lastPos << endl; // TESTING
+
     // make sure the line only contains A-Z, a-z, 0-9 -./_ (dash, dot, forward slash, underscore)
         if(!regex_match(tokenGroups.at(i),pattern)){
             cout << "invalid character entered try again\n";
@@ -84,10 +120,24 @@ for(int i=0; i< tokenGroups.size(); i++){
         }
 
     // break the group up into tokens
-    tokens = lineToTokens(tokenGroups.at(i),' ');
+    vector<char> space{' '};
+    tokens = lineToTokens(tokenGroups.at(i), space);
 
-    // call the coresponding function or execute the specified file
-    status = myExecute(tokens); // the only thing is I don't think  exit will exit unless its the last command ented on a line but I believ this is the behavior of the shell in my linux machine so that should be fine
+
+    //cout << "tokens: "; // TESTING
+    //for(auto i: tokens){ // TESTING 
+      //  cout << i << ".";    
+    //}   
+
+    //cout << "lin.at(pos): " << line.at(pos) << endl; // TESTING
+    //cout << "pos: " << pos << endl; // TESTING
+
+
+        // child process does stuff here
+        // call the coresponding function or execute the specified file
+        status = myExecute(tokens, line.at(pos)); // the only thing is  I don't think  exit will exit unless its the last command ented on a line but I believ this is the behavior of the shell in my linux machine so that should be fine        
+      
+
 }
         
 
@@ -108,21 +158,39 @@ return 0;
 
 
 // break a single line into tokens
-vector<string> lineToTokens(const string& line, char delim) {
+vector<string> lineToTokens(const string& line, vector<char> delims) {
 	vector<string> vec;
 	int len = 0; // the length of the current word
-	int pos = 0; // the position we recorded the last space at (+1 to avoid copying the space character)
+	int pos = 0; // the position we recorded the last space at (+1 to avoid copying the space
+
+
 	auto lastIt = line.begin(); // the last iterator before i
 
 	for (auto i = line.begin(); i < line.end(); i++) {
 
-		if (*lastIt == delim) {
+        
+        bool delimWasLast = false; // if delim == *lastIt but for any of the delims
+        for(int j = 0; j< delims.size(); j++){
+            if(*lastIt == delims.at(j)){
+                delimWasLast = true;             
+            }   
+        }
+      
+        bool delimFound = false; // if delim == *i but for any of the delims
+        for(int j = 0; j< delims.size(); j++){
+            if(*i == delims.at(j)){
+                delimFound = true;             
+            }   
+        }
+
+
+		if (delimWasLast) {
 			pos = i - line.begin();
 			len = 0;
 			// and move on...
 		}
 
-		else if(*i == delim){
+		else if(delimFound){
 			string newToken = line.substr(pos, len);
 			vec.push_back(newToken);
 			len = 0;
@@ -133,7 +201,15 @@ vector<string> lineToTokens(const string& line, char delim) {
 		lastIt = i;
 	}
 
-	if (line.back() != ' ') {
+
+    bool notDelimTerminated = false; // if delim != line.back() but for any of the delims character)
+    for(int j = 0; j< delims.size(); j++){
+            if(line.back() != delims.at(j)){
+                notDelimTerminated = true;             
+            }   
+        }
+
+	if (notDelimTerminated) {
 		vec.push_back(line.substr(pos)); // get the last word 
 	}
 	
@@ -190,7 +266,7 @@ int myPrintFunc(vector<string> &args){
 // for non-builtin commands
 // must specify program as first argument
 // and its run with ./programToRun
-int myLaunch(vector<string> &args){
+int myLaunch(vector<string> &args, char upcomingDelim){
     pid_t pid, wpid;
     int status;
 
@@ -219,11 +295,16 @@ int myLaunch(vector<string> &args){
     }
     else{
         // parent process lands here
-        // and must wait for child to finish
-        do{
-            wpid = waitpid(pid, &status, WUNTRACED);
-        }   while(!WIFEXITED(status) && !WIFSIGNALED(status));
-    }
+        // parent waits only if the commands and arguments line is terminated by ; 
+//cout << "upcoming delim: " << upcomingDelim << endl; // TESTING
+        if(upcomingDelim == ';'){
+  //          cout << "wating..." << endl; // TESTING
+            do{
+                wpid = waitpid(pid, &status, WUNTRACED);
+            }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+       }
+    }   // otherwise immediately return (after freeing memory of course)
+
 
     // free the memory taken to turn args into a c-style char** 
     for(int i=0; i< args.size(); i++){
@@ -239,23 +320,24 @@ int myLaunch(vector<string> &args){
 
 
 // run the program from the file or run the specified buitlin functions
-int myExecute(vector<string> &args){
+int myExecute(vector<string> &args, char delim){
     if(args.size() == 0){
         // an empty command was entered
         return 1;        
     }
 
     else{
+    //cout << "checking if buitlin\n"; // TESTING
         for(int i=0; i< funcPtrs.size(); i++){ // for all of the builtins
             if(args.at(0) == names.at(i)){ // if the first argument is a builtin
+                //cout << "buitlin: " << names.at(i) << "running...\n"; // TESTING
                 return (funcPtrs.at(i))(args); // run it with its arguments
             }
         }    
     
-    return myLaunch(args); // otherwise launch the program with its arguments 
+    return myLaunch(args, delim); // otherwise launch the program with its arguments 
     }
 }
-
 
 
 
