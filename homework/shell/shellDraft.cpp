@@ -53,7 +53,7 @@ int main(){
 do{
 if(getcwd(buffer,sizeof(buffer)) != NULL){cout << buffer;}
 else{perror("getcdw() error");}
-cout << "> ";
+cout << "% ";
 
 // read in line
     if(std::getline(cin, line)){
