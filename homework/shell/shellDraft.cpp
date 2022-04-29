@@ -1,4 +1,10 @@
-
+/*
+ * shellDraft.cpp
+ * Aleks McCormick & Enigma Adams
+ * 2022/04/28
+ * Spring 2022 CS321
+ * A basic little shell.
+ */
 
 #include <vector>
 #include <string>
@@ -56,7 +62,7 @@ int main(){
 do{
 if(getcwd(buffer,sizeof(buffer)) != NULL){cout << buffer;}
 else{perror("getcdw() error");}
-cout << "> ";
+cout << "% ";
 
 // read in line
     if(std::getline(cin, line)){
@@ -280,30 +286,29 @@ int myLaunch(vector<string> &args, char upcomingDelim){
     }
     cArgs[args.size()] = nullptr;
 
-    
-    pid = fork();
-    if(pid == 0){
-        // child process does stuff here
-        if(execvp(args.at(0).c_str(), cArgs) == -1){
-            perror("my shell perror");// if execvp returns somethings wrong      
-        }        
-        exit(EXIT_FAILURE);
-    }
-    else if (pid<0){
-        // error forking
-        perror("my shell perror");    
-    }
-    else{
-        // parent process lands here
-        // parent waits only if the commands and arguments line is terminated by ; 
-//cout << "upcoming delim: " << upcomingDelim << endl; // TESTING
-        if(upcomingDelim == ';'){
-  //          cout << "wating..." << endl; // TESTING
-            do{
-                wpid = waitpid(pid, &status, WUNTRACED);
-            }while(!WIFEXITED(status) && !WIFSIGNALED(status));
-       }
-    }   // otherwise immediately return (after freeing memory of course)
+	    pid = fork();
+	    if(pid == 0){
+	        // child process does stuff here
+	        if(execvp(args.at(0).c_str(), cArgs) == -1){
+	            perror("my shell perror");// if execvp returns somethings wrong      
+	        }        
+	        exit(EXIT_FAILURE);
+	    }
+	    else if (pid<0){
+	        // error forking
+	        perror("my shell perror");    
+	    }
+	    else{
+	        // parent process lands here
+	        // parent waits only if the commands and arguments line is terminated by ; 
+	        //cout << "upcoming delim: " << upcomingDelim << endl; // TESTING
+	        if(upcomingDelim == ';'){
+	            //cout << "wating..." << endl; // TESTING
+	            do{
+	               wpid = waitpid(pid, &status, WUNTRACED);
+	            }while(!WIFEXITED(status) && !WIFSIGNALED(status));
+	       }
+	    }   // otherwise immediately return (after freeing memory of course)
 
 
     // free the memory taken to turn args into a c-style char** 
@@ -338,35 +343,3 @@ int myExecute(vector<string> &args, char delim){
     return myLaunch(args, delim); // otherwise launch the program with its arguments 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
