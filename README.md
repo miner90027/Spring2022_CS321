@@ -33,7 +33,8 @@ Further sub directories in each directory are broken into topic for examples and
 ### [- lab_5](homework/lab_5)
 - lab_5.sh
 ### [- shell](homework/shell)
-- shell.cpp
+- shellDraft.cpp
+- justToken.cpp
 ---
 ### [examples/](examples/)
 ### [- shell/](examples/shell/)
